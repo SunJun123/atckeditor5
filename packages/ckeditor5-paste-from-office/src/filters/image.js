@@ -178,11 +178,16 @@ function extractImageDataFromRtf( rtfData ) {
 		return [];
 	}
 
-	const regexPictureHeader = /{\\pict[\s\S]+?\\bliptag-?\d+(\\blipupi-?\d+)?({\\\*\\blipuid\s?[\da-fA-F]+)?[\s}]*?/;
-	const regexPicture = new RegExp( '(?:(' + regexPictureHeader.source + '))([\\da-fA-F\\s]+)\\}', 'g' );
-	const images = rtfData.match( regexPicture );
+	let regexPictureHeader = /{\\pict[\s\S]+?\\bliptag-?\d+(\\blipupi-?\d+)?({\\\*\\blipuid\s?[\da-fA-F]+)?[\s}]*?/;
+	let regexPicture = new RegExp( '(?:(' + regexPictureHeader.source + '))([\\da-fA-F\\s]+)\\}', 'g' );
+	let images = rtfData.match( regexPicture );
 	const result = [];
-
+	// 针对 wps 添加的判断
+	if ( !images ) {
+		regexPictureHeader = /{\\pict[\s\S]+?(\\pngblip-?\d+)?(\\wmetafile8-?\d+)?{\\\*\\blipuid\s?[\da-fA-F]+[\s}]*?/;
+		regexPicture = new RegExp( '(?:(' + regexPictureHeader.source + '))([\\da-fA-F\\s]+)\\}', 'g' );
+		images = rtfData.match( regexPicture );
+	}
 	if ( images ) {
 		for ( const image of images ) {
 			let imageType = false;
