@@ -40,7 +40,7 @@ export function normalizeSpacing( htmlString ) {
 export function normalizeSpacerunSpans( htmlDocument ) {
 	htmlDocument.querySelectorAll( 'span[style*=spacerun]' ).forEach( el => {
 		// 针对 wps 添加的判断
-		if ( el.childNodes[ 0 ].data ) {
+		if ( el.childNodes[ 0 ] && el.childNodes[ 0 ].data ) {
 			const innerTextLength = el.innerText.length || 0;
 			el.innerHTML = Array( innerTextLength + 1 ).join( '\u00A0 ' ).substr( 0, innerTextLength );
 		}
