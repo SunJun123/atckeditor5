@@ -1,6 +1,6 @@
 {
   "name": "at-ckeditor5",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "The document editor build of CKEditor 5 – the best browser-based rich text editor.",
   "keywords": [
     "ckeditor5-build",
@@ -46,7 +46,8 @@
     "@ckeditor/ckeditor5-paragraph": "^33.0.0",
     "@ckeditor/ckeditor5-paste-from-office": "^33.0.0",
     "@ckeditor/ckeditor5-table": "^33.0.0",
-    "@ckeditor/ckeditor5-typing": "^33.0.0"
+    "@ckeditor/ckeditor5-typing": "^33.0.0",
+    "@ckeditor/ckeditor5-html-support": "^33.0.0"
   },
   "devDependencies": {
     "@ckeditor/ckeditor5-core": "^33.0.0",
@@ -54,12 +55,14 @@
     "@ckeditor/ckeditor5-dev-webpack-plugin": "^28.0.1",
     "@ckeditor/ckeditor5-theme-lark": "^33.0.0",
     "css-loader": "^5.2.7",
+    "html-webpack-plugin": "^4.3.0",
     "postcss-loader": "^4.3.0",
     "raw-loader": "^4.0.1",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^4.2.3",
     "webpack": "^5.58.1",
-    "webpack-cli": "^4.9.0"
+    "webpack-cli": "^4.9.0",
+    "webpack-dev-server": "^4.11.1"
   },
   "engines": {
     "node": ">=14.0.0",
@@ -74,6 +77,8 @@
     "url": "https://github.com/SunJun123/atckeditor5.git"
   },
   "scripts": {
+    
+    "dev": "webpack serve --config webpack.dev.config.js",
     "build": "webpack --mode production",
     "preversion": "npm run build"
   }

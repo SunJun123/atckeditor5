@@ -14,6 +14,17 @@ module.exports = {
 	},
 	overrides: [
 		{
+			files: [ '**/src/**/*.js', '.eslintrc.js', '**/webpack.dev.config.js' ],
+			rules: {
+				'linebreak-style': 'off',
+				'comma-dangle': 'off',
+				'array-bracket-spacing': 'off',
+				'arrow-parens': 'off',
+				'space-in-parens': 'off',
+				'no-undef': 'off'
+			}
+		},
+		{
 			files: [ '**/tests/**/*.js' ],
 			rules: {
 				'no-unused-expressions': 'off',
