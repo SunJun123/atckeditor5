@@ -77,7 +77,6 @@
     "url": "https://github.com/SunJun123/atckeditor5.git"
   },
   "scripts": {
-    
     "dev": "webpack serve --config webpack.dev.config.js",
     "build": "webpack --mode production",
     "preversion": "npm run build"
