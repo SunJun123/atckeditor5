@@ -42,7 +42,7 @@ import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformatio
 import CloudServices from '@ckeditor/ckeditor5-cloud-services/src/cloudservices';
 import GeneralHtmlSupport from '@ckeditor/ckeditor5-html-support/src/generalhtmlsupport';
 
-export default class DecoupledEditor extends DecoupledEditorBase { }
+export default class DecoupledEditor extends DecoupledEditorBase {}
 
 // Plugins to include in the build.
 DecoupledEditor.builtinPlugins = [
@@ -118,7 +118,7 @@ DecoupledEditor.defaultConfig = {
 		],
 	},
 	image: {
-		resizeUnit: 'px',
+		resizeUnit: '%',
 		toolbar: [
 			'imageStyle:inline',
 			'imageStyle:wrapText',
@@ -203,7 +203,65 @@ DecoupledEditor.create('')
 		document
 			.querySelector('.editable-container')
 			.appendChild(editor.ui.view.editable.element);
+
+		// 图片上传适配器
+		editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+			return {
+				upload: async () => {
+					// 读取图片
+					return await loader.file
+						.then((f) => {
+							const F = new FileReader();
+							F.readAsArrayBuffer(f);
+							return new Promise((resolve) => {
+								F.onload = () => {
+									resolve({ bufAsArray: F.result, file: f });
+								};
+							});
+						})
+						.then(async (v) => {
+							const uploadRes = await uploadApi({ file: v.file });
+
+							if (uploadRes.code === '0') {
+								const info = uploadRes.data;
+								const path =
+									'https://files.atfusion.cn/' + info[ 0 ].path;
+								that.imgPath = path;
+							}
+							return {
+								default: that.imgPath,
+							};
+						});
+				},
+			};
+		};
 	})
 	.catch((error) => {
 		console.error('There was a problem initializing the editor.', error);
 	});
+
+function uploadApi(file) {
+	return new Promise((resolve, reject) => {
+		const formData = new FormData();
+		formData.append('file', file);
+		const request = new XMLHttpRequest();
+		request.onreadystatechange = () => {
+			if (request.readyState === 4 && request.status === 200) {
+				const result = JSON.parse(request.responseText);
+				resolve(result);
+			}
+		};
+		request.open('POST', 'https://api.atfusion.cn/zuul/dfs/userFile/uploadFile'); // 填入请求的url
+		request.setRequestHeader('at-industryid', '4');
+		request.setRequestHeader('at-openid', '04df4d434d481c5bb723be1b6df1ee65');
+		request.setRequestHeader('at-token', '6f7463585c85ab0fa4a353f5a67d52afc74401ba0a2879f2beabc870e' +
+		'0e7d1b323ea040bf3035b2c67887a56bfe8c1206edf7b84dec83b13bb0344f869543ea9e5e827379748dede721db56b0d6f081d3107' +
+		'a806b087c84d65b5546a18211c604a3c23efcd86f714f8a7b80d08d6af666c224a577f46355dab3e9d1bf93c5ab4b72c8af33c5da66675dd' +
+		'78c59f5134b1ca54ac8524cb45342d7e14c32332b34083ae9ef3e93bf2cf');
+		request.setRequestHeader('at-appclient', '3437');
+		request.onerror = () => {
+			reject(new Error('请求失败！'));
+		}; // 发送请求
+		request.send(formData);
+	});
+}
